@@ -1,0 +1,13 @@
+{
+  "name": "smart-lost-found",
+  "version": "1.0.0",
+  "description": "Smart Lost & Found System - Digital Campus Corkboard",
+  "scripts": {
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "seed": "cd server && npm run seed"
+  },
+  "keywords": ["lost-and-found", "mern", "react", "express", "mongodb"],
+  "author": "",
+  "license": "ISC"
+}

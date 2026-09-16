@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment Variables
+.env
+server/.env
+client/.env
+
+# Build outputs
+dist/
+client/dist/
+build/
+client/build/
+
+# Uploaded item files in server
+server/uploads/*
+!server/uploads/.gitkeep
+
+# Logs & caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+.DS_Store
+Thumbs.db
