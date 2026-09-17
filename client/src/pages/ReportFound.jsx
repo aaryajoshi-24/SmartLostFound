@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { Pin, ArrowLeft, Image, MapPin, Calendar, Tag, AlertCircle, Sparkles } from 'lucide-react';
+import { ArrowLeft, Image, MapPin, Calendar, Tag, AlertCircle } from 'lucide-react';
 
 const categories = [
   'Electronics',
@@ -96,125 +96,73 @@ const ReportFound = () => {
   };
 
   return (
-    <div className="noticeboard-frame" style={{ maxWidth: '760px' }}>
+    <div className="app-container" style={{ maxWidth: '680px' }}>
       <button
         type="button"
         onClick={() => navigate(-1)}
         style={{
           background: 'transparent',
           border: 'none',
-          color: '#3e240f',
-          fontFamily: 'var(--font-marker)',
-          fontSize: '1.2rem',
+          color: '#64748b',
+          fontSize: '0.9rem',
+          fontWeight: '600',
           cursor: 'pointer',
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.4rem',
-          marginBottom: '1rem',
+          marginBottom: '1.25rem',
         }}
       >
-        <ArrowLeft size={18} /> Back
+        <ArrowLeft size={16} /> Back
       </button>
 
-      {/* Physical Report Tag Flyer */}
-      <div
-        className="pin-card ruled-paper"
-        style={{
-          background: 'var(--paper-found)',
-          border: '2px solid #a7f3d0',
-          padding: '2.5rem 2rem',
-        }}
-      >
-        {/* Green Pushpin */}
-        <div className="pushpin pushpin-green">
-          <div className="pushpin-head"></div>
-          <div className="pushpin-point"></div>
-        </div>
-
-        {/* Tag Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            borderBottom: '2px dashed #34d399',
-            paddingBottom: '1rem',
-            marginBottom: '1.75rem',
-          }}
-        >
-          <div>
-            <span className="badge-found" style={{ padding: '0.3rem 0.8rem', borderRadius: '4px' }}>
-              ✦ GOOD SAMARITAN NOTICE
-            </span>
-            <h2
-              style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '2.3rem',
-                color: '#065f46',
-                marginTop: '0.5rem',
-              }}
-            >
-              Report a Found Item
-            </h2>
-            <p style={{ color: '#047857', fontSize: '0.9rem' }}>
-              Help reunite this item with its rightful owner by pinning a found flyer to the board.
-            </p>
-          </div>
-
-          <div className="punch-hole" />
+      <div className="clean-card" style={{ padding: '2rem' }}>
+        {/* Header */}
+        <div style={{ borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+          <span className="tag-found" style={{ marginBottom: '0.5rem' }}>
+            Found Item Form
+          </span>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#0f172a', marginTop: '0.25rem' }}>
+            Report a Found Item
+          </h1>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+            Help reunite a lost item with its rightful owner by publishing this found notice.
+          </p>
         </div>
 
         {error && (
-          <div className="notice-alert notice-alert-error" style={{ marginBottom: '1.5rem' }}>
-            <AlertCircle size={18} style={{ display: 'inline', marginRight: '0.5rem', verticalAlign: 'text-bottom' }} />
-            {error}
+          <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+            <AlertCircle size={18} />
+            <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.3rem' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {/* Title */}
           <div>
-            <label
-              style={{
-                display: 'block',
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.2rem',
-                color: '#065f46',
-                marginBottom: '0.3rem',
-              }}
-            >
-              Found Item Title / Brief Summary *
+            <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.35rem' }}>
+              Item Name / Summary *
             </label>
             <input
               type="text"
               name="title"
-              placeholder="e.g. Set of Dorm Room Keys with Blue Lanyard, Casio Scientific Calculator..."
-              className="paper-input"
+              placeholder="e.g. Set of Dorm Room Keys, Casio Calculator, Blue Water Bottle..."
+              className="clean-input"
               value={formData.title}
               onChange={handleChange}
               required
             />
           </div>
 
-          {/* Category & Date Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem' }}>
+          {/* Category & Date */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
             <div>
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontFamily: 'var(--font-marker)',
-                  fontSize: '1.2rem',
-                  color: '#065f46',
-                  marginBottom: '0.3rem',
-                }}
-              >
-                <Tag size={16} /> Category *
+              <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.35rem' }}>
+                Category *
               </label>
               <select
                 name="category"
-                className="paper-input"
+                className="clean-input"
                 value={formData.category}
                 onChange={handleChange}
                 required
@@ -228,23 +176,13 @@ const ReportFound = () => {
             </div>
 
             <div>
-              <label
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                  fontFamily: 'var(--font-marker)',
-                  fontSize: '1.2rem',
-                  color: '#065f46',
-                  marginBottom: '0.3rem',
-                }}
-              >
-                <Calendar size={16} /> Date Found *
+              <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.35rem' }}>
+                Date Found *
               </label>
               <input
                 type="date"
                 name="date"
-                className="paper-input"
+                className="clean-input"
                 value={formData.date}
                 onChange={handleChange}
                 required
@@ -254,24 +192,14 @@ const ReportFound = () => {
 
           {/* Location */}
           <div>
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.2rem',
-                color: '#065f46',
-                marginBottom: '0.3rem',
-              }}
-            >
-              <MapPin size={16} /> Location Where Found *
+            <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.35rem' }}>
+              Location Where Found *
             </label>
             <input
               type="text"
               name="location"
-              placeholder="e.g. Main Quad Benches, Dining Hall Table 4, Library 3rd Floor..."
-              className="paper-input"
+              placeholder="e.g. Main Quad Bench, Student Union Cafeteria..."
+              className="clean-input"
               value={formData.location}
               onChange={handleChange}
               required
@@ -280,22 +208,14 @@ const ReportFound = () => {
 
           {/* Description */}
           <div>
-            <label
-              style={{
-                display: 'block',
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.2rem',
-                color: '#065f46',
-                marginBottom: '0.3rem',
-              }}
-            >
+            <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.35rem' }}>
               Description & Helpful Clues *
             </label>
             <textarea
               name="description"
-              rows={5}
-              placeholder="Describe the item's general appearance. TIP: Keep one or two unique details secret so the claimant can prove ownership when they file a claim request!"
-              className="paper-input"
+              rows={4}
+              placeholder="Describe the item general appearance. (Tip: keep one small secret so the owner can prove ownership!)"
+              className="clean-input"
               value={formData.description}
               onChange={handleChange}
               required
@@ -303,33 +223,23 @@ const ReportFound = () => {
             />
           </div>
 
-          {/* Image Upload or URL */}
+          {/* Image */}
           <div
             style={{
-              background: 'rgba(255,255,255,0.7)',
-              padding: '1.2rem',
-              borderRadius: '6px',
-              border: '1px dashed #6ee7b7',
+              backgroundColor: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: '8px',
+              padding: '1rem',
             }}
           >
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.2rem',
-                color: '#065f46',
-                marginBottom: '0.3rem',
-              }}
-            >
-              <Image size={16} /> Photo of Found Item (Optional)
+            <label style={{ display: 'block', fontSize: '0.88rem', fontWeight: '600', color: '#334155', marginBottom: '0.5rem' }}>
+              Attach Photo (Optional)
             </label>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               <div>
-                <span style={{ fontSize: '0.85rem', color: '#57534e', display: 'block', marginBottom: '0.25rem' }}>
-                  Upload image file:
+                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.25rem' }}>
+                  Upload file:
                 </span>
                 <input
                   type="file"
@@ -340,14 +250,14 @@ const ReportFound = () => {
               </div>
 
               <div>
-                <span style={{ fontSize: '0.85rem', color: '#57534e', display: 'block', marginBottom: '0.25rem' }}>
-                  Or paste direct image URL:
+                <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block', marginBottom: '0.25rem' }}>
+                  Or image URL:
                 </span>
                 <input
                   type="url"
                   name="image"
                   placeholder="https://example.com/photo.jpg"
-                  className="paper-input"
+                  className="clean-input"
                   value={formData.image}
                   onChange={handleChange}
                 />
@@ -355,41 +265,32 @@ const ReportFound = () => {
             </div>
 
             {previewUrl && (
-              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <div style={{ marginTop: '0.75rem' }}>
                 <img
                   src={previewUrl}
                   alt="Preview"
-                  style={{ maxHeight: '180px', borderRadius: '4px', border: '2px solid #fff', boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}
+                  style={{ maxHeight: '140px', borderRadius: '6px', border: '1px solid #e2e8f0' }}
                 />
               </div>
             )}
           </div>
 
-          {/* Submit button */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '0.5rem' }}>
+          {/* Submit Actions */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
             <button
               type="button"
               onClick={() => navigate(-1)}
-              style={{
-                background: 'transparent',
-                border: '1px solid #065f46',
-                color: '#065f46',
-                padding: '0.6rem 1.2rem',
-                borderRadius: '6px',
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.1rem',
-                cursor: 'pointer',
-              }}
+              className="btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="btn-tag-found"
-              style={{ fontSize: '1.25rem', padding: '0.65rem 1.75rem' }}
+              className="btn-primary"
+              style={{ backgroundColor: '#059669', borderColor: '#059669' }}
             >
-              <Sparkles size={18} /> {loading ? 'Pinning Notice...' : 'Pin Found Notice to Board'}
+              {loading ? 'Submitting...' : 'Post Found Report'}
             </button>
           </div>
         </form>

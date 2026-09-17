@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import NoticeCard from '../components/NoticeCard';
 import FilterBar from '../components/FilterBar';
-import { Pin, Plus, AlertCircle, Sparkles } from 'lucide-react';
+import { Plus, AlertCircle, SearchX } from 'lucide-react';
 
 const NoticeBoard = () => {
   const [items, setItems] = useState([]);
@@ -33,14 +33,13 @@ const NoticeBoard = () => {
       setItems(res.data);
     } catch (err) {
       console.error('Error fetching items:', err);
-      setError(err.response?.data?.message || 'Could not load notices from the board. Please try again.');
+      setError(err.response?.data?.message || 'Could not load notices from the server.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Debounce search/filter query
     const timer = setTimeout(() => {
       fetchItems();
     }, 250);
@@ -63,8 +62,8 @@ const NoticeBoard = () => {
   };
 
   return (
-    <div className="noticeboard-frame">
-      {/* Pinned Board Header Banner */}
+    <div className="app-container">
+      {/* Page Header */}
       <div
         style={{
           display: 'flex',
@@ -72,44 +71,41 @@ const NoticeBoard = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '1rem',
-          marginBottom: '1.5rem',
+          marginBottom: '2rem',
         }}
       >
         <div>
           <h1
             style={{
-              fontFamily: 'var(--font-marker)',
-              fontSize: '2.5rem',
-              lineHeight: 1.1,
-              color: '#442812',
-              textShadow: '1px 2px 2px rgba(255,255,255,0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.6rem',
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#0f172a',
+              letterSpacing: '-0.02em',
+              marginBottom: '0.25rem',
             }}
           >
-            <Pin size={32} style={{ color: '#dc2626' }} />
-            The Campus Corkboard
+            Campus Noticeboard
           </h1>
-          <p
-            style={{
-              color: '#5c3817',
-              fontFamily: 'var(--font-sans)',
-              fontSize: '0.95rem',
-              marginTop: '0.25rem',
-            }}
-          >
-            Lost something on campus? Or found an item waiting for its owner? Pin a notice below!
+          <p style={{ color: '#64748b', fontSize: '0.95rem' }}>
+            Search, report, and manage lost and found items across the campus community.
           </p>
         </div>
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <Link to="/report-lost" className="btn-tag-lost">
-            <Plus size={18} /> Pin Lost Notice
+          <Link
+            to="/report-lost"
+            className="btn-primary"
+            style={{ backgroundColor: '#dc2626', borderColor: '#dc2626' }}
+          >
+            <Plus size={16} /> Report Lost Item
           </Link>
-          <Link to="/report-found" className="btn-tag-found">
-            <Plus size={18} /> Pin Found Notice
+          <Link
+            to="/report-found"
+            className="btn-primary"
+            style={{ backgroundColor: '#059669', borderColor: '#059669' }}
+          >
+            <Plus size={16} /> Report Found Item
           </Link>
         </div>
       </div>
@@ -123,110 +119,105 @@ const NoticeBoard = () => {
 
       {/* Error state */}
       {error && (
-        <div className="notice-alert notice-alert-error" style={{ marginBottom: '1.5rem' }}>
-          <AlertCircle size={18} style={{ display: 'inline', marginRight: '0.5rem', verticalAlign: 'text-bottom' }} />
-          {error}
+        <div className="alert-box alert-error" style={{ marginBottom: '1.5rem' }}>
+          <AlertCircle size={18} />
+          <span>{error}</span>
         </div>
       )}
 
       {/* Loading state */}
       {loading ? (
-        <div
-          style={{
-            padding: '4rem 1rem',
-            textAlign: 'center',
-          }}
-        >
+        <div style={{ textAlign: 'center', padding: '4rem 1rem' }}>
           <div
-            className="pin-card"
+            className="clean-card"
             style={{
               display: 'inline-block',
-              padding: '2.5rem 3rem',
+              padding: '2rem 3rem',
               textAlign: 'center',
             }}
           >
-            <div className="pushpin"><div className="pushpin-head"></div><div className="pushpin-point"></div></div>
-            <p style={{ fontFamily: 'var(--font-marker)', fontSize: '1.6rem', color: '#5c3817' }}>
-              Scanning the noticeboard...
+            <div
+              style={{
+                width: '32px',
+                height: '32px',
+                border: '3px solid #e2e8f0',
+                borderTopColor: '#2563eb',
+                borderRadius: '50%',
+                animation: 'spin 0.8s linear infinite',
+                margin: '0 auto 1rem',
+              }}
+            />
+            <p style={{ fontSize: '0.95rem', fontWeight: '500', color: '#475569' }}>
+              Loading campus notices...
             </p>
-            <p style={{ fontSize: '0.9rem', color: '#8c6b44', marginTop: '0.5rem' }}>
-              Retrieving community notices from MongoDB
-            </p>
+            <style>{`
+              @keyframes spin {
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
           </div>
         </div>
       ) : items.length === 0 ? (
         /* Empty State */
         <div
+          className="clean-card"
           style={{
-            padding: '4rem 1rem',
+            padding: '3.5rem 2rem',
             textAlign: 'center',
+            maxWidth: '520px',
+            margin: '2rem auto',
           }}
         >
           <div
-            className="pin-card"
             style={{
-              maxWidth: '520px',
-              margin: '0 auto',
-              padding: '2.5rem 2rem',
-              textAlign: 'center',
-              background: '#fffdf5',
-              border: '2px dashed #b89872',
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: '#f1f5f9',
+              color: '#64748b',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem',
             }}
           >
-            <div className="pushpin pushpin-brass"><div className="pushpin-head"></div><div className="pushpin-point"></div></div>
-            <Sparkles size={38} style={{ color: '#d97706', margin: '0 auto 0.75rem' }} />
-            <h3
-              style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.85rem',
-                color: '#442812',
-                marginBottom: '0.5rem',
-              }}
+            <SearchX size={24} />
+          </div>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#0f172a', marginBottom: '0.4rem' }}>
+            No matching notices found
+          </h3>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
+            We couldn't find any items matching your selected criteria. Try adjusting your filters or post a new notice.
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
+            <button
+              type="button"
+              onClick={handleReset}
+              className="btn-secondary btn-sm"
             >
-              No Notices Found on This Board
-            </h3>
-            <p
-              style={{
-                color: '#6e5a48',
-                fontSize: '0.95rem',
-                lineHeight: '1.5',
-                marginBottom: '1.5rem',
-              }}
-            >
-              We couldn't find any notices matching your current search or filters. Try clearing your filters or be the first to post a notice!
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={handleReset}
-                className="btn-cork-primary"
-                style={{ fontSize: '1rem' }}
-              >
-                Clear All Filters
-              </button>
-              <Link to="/report-lost" className="btn-tag-lost" style={{ fontSize: '1rem' }}>
-                Post Lost Notice
-              </Link>
-            </div>
+              Reset Filters
+            </button>
+            <Link to="/report-lost" className="btn-primary btn-sm">
+              Post Lost Notice
+            </Link>
           </div>
         </div>
       ) : (
-        /* Pinboard Masonry Grid */
+        /* Card Grid */
         <div>
           <div
             style={{
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.15rem',
-              color: '#341e0c',
-              marginBottom: '0.75rem',
-              paddingLeft: '0.25rem',
+              fontSize: '0.88rem',
+              fontWeight: '500',
+              color: '#64748b',
+              marginBottom: '1rem',
             }}
           >
-            Showing {items.length} {items.length === 1 ? 'Notice' : 'Notices'} Pinned on Board
+            Showing {items.length} {items.length === 1 ? 'notice' : 'notices'}
           </div>
-          <div className="pinboard-grid">
-            {items.map((item, index) => (
-              <NoticeCard key={item._id} item={item} index={index} />
+          <div className="items-grid">
+            {items.map((item) => (
+              <NoticeCard key={item._id} item={item} />
             ))}
           </div>
         </div>

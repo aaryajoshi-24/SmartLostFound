@@ -167,9 +167,10 @@ async function seedInitialData() {
   }
 }
 
-// Connect to MongoDB (with automatic fallback to in-memory MongoDB)
+// Connect to MongoDB. Fallback to in-memory MongoDB is opt-in only.
 async function connectDb() {
   const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/smart_lost_found';
+  const useInMemoryFallback = process.env.USE_IN_MEMORY_DB === 'true';
 
   try {
     console.log(`Connecting to MongoDB at: ${mongoUri}...`);
@@ -179,7 +180,16 @@ async function connectDb() {
     isDbConnected = true;
     console.log('✅ Connected to MongoDB successfully.');
   } catch (err) {
-    console.warn(`Local/custom MongoDB not found. Starting automatic zero-setup MongoDB engine...`);
+    console.error(`MongoDB connection failed for: ${mongoUri}`);
+    console.error(err.message);
+
+    if (!useInMemoryFallback) {
+      console.error('Database connection failed. Set MONGO_URI to a valid MongoDB URL or enable USE_IN_MEMORY_DB=true explicitly.');
+      isDbConnected = false;
+      return;
+    }
+
+    console.warn('USE_IN_MEMORY_DB=true detected. Starting automatic zero-setup MongoDB engine...');
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
       const mongod = await MongoMemoryServer.create();

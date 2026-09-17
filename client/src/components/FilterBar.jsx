@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, RotateCcw, MapPin } from 'lucide-react';
+import { Search, MapPin, RotateCcw } from 'lucide-react';
 
 const categories = [
   'All',
@@ -13,22 +13,30 @@ const categories = [
 ];
 
 const FilterBar = ({ filters, onFilterChange, onReset }) => {
+  const getTabStyle = (typeValue) => {
+    const isActive = filters.type === typeValue;
+    return {
+      padding: '0.45rem 1rem',
+      borderRadius: '6px',
+      fontSize: '0.88rem',
+      fontWeight: '600',
+      cursor: 'pointer',
+      border: isActive ? '1px solid #2563eb' : '1px solid #e2e8f0',
+      backgroundColor: isActive ? '#eff6ff' : '#ffffff',
+      color: isActive ? '#2563eb' : '#475569',
+      transition: 'all 0.15s ease',
+    };
+  };
+
   return (
     <div
+      className="clean-card"
       style={{
-        background: '#fffdf8',
-        border: '3px solid #8b572a',
-        borderRadius: '6px',
         padding: '1.25rem',
-        boxShadow: '0 8px 16px rgba(0,0,0,0.22), inset 0 0 10px rgba(139, 87, 42, 0.08)',
         marginBottom: '2rem',
-        position: 'relative',
       }}
     >
-      {/* Visual Tape Accent */}
-      <div className="tape-top" />
-
-      {/* Top row: Type Tabs */}
+      {/* Top Row: Type Segment Toggles & Reset */}
       <div
         style={{
           display: 'flex',
@@ -36,171 +44,133 @@ const FilterBar = ({ filters, onFilterChange, onReset }) => {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '1rem',
-          borderBottom: '2px dashed #e2d2ba',
-          paddingBottom: '0.9rem',
+          borderBottom: '1px solid #f1f5f9',
+          paddingBottom: '1rem',
           marginBottom: '1rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <span
-            style={{
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.25rem',
-              color: '#5c3817',
-              marginRight: '0.4rem',
-            }}
-          >
-            Board Section:
-          </span>
-
           <button
             type="button"
-            className={`sticky-tab ${filters.type === '' ? 'active' : ''}`}
+            style={getTabStyle('')}
             onClick={() => onFilterChange('type', '')}
           >
-            📋 All Notices
+            All Notices
           </button>
           <button
             type="button"
-            className={`sticky-tab ${filters.type === 'lost' ? 'active' : ''}`}
-            style={
-              filters.type === 'lost'
-                ? { background: '#fecaca', color: '#991b1b' }
-                : { background: '#fee2e2', color: '#991b1b' }
-            }
+            style={getTabStyle('lost')}
             onClick={() => onFilterChange('type', 'lost')}
           >
-            ⚠ Lost Items
+            Lost Items
           </button>
           <button
             type="button"
-            className={`sticky-tab ${filters.type === 'found' ? 'active' : ''}`}
-            style={
-              filters.type === 'found'
-                ? { background: '#bbf7d0', color: '#166534' }
-                : { background: '#dcfce7', color: '#166534' }
-            }
+            style={getTabStyle('found')}
             onClick={() => onFilterChange('type', 'found')}
           >
-            ✦ Found Items
+            Found Items
           </button>
         </div>
 
-        {/* Reset button */}
         <button
           type="button"
           onClick={onReset}
-          style={{
-            background: 'transparent',
-            border: '1px solid #c29b68',
-            color: '#78350f',
-            fontFamily: 'var(--font-sans)',
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            padding: '0.35rem 0.75rem',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            transition: 'background 0.15s',
-          }}
-          onMouseEnter={(e) => (e.target.style.background = '#fef3c7')}
-          onMouseLeave={(e) => (e.target.style.background = 'transparent')}
+          className="btn-secondary btn-sm"
+          style={{ fontSize: '0.82rem' }}
         >
           <RotateCcw size={13} /> Reset Filters
         </button>
       </div>
 
-      {/* Main Filter Controls Grid */}
+      {/* Filter Inputs Grid */}
       <div
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '1rem',
-          alignItems: 'end',
         }}
       >
-        {/* Keyword Search */}
-        <div style={{ position: 'relative' }}>
+        {/* Search */}
+        <div>
           <label
             style={{
               display: 'block',
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.05rem',
-              color: '#5c3817',
-              marginBottom: '0.3rem',
+              fontSize: '0.82rem',
+              fontWeight: '600',
+              color: '#475569',
+              marginBottom: '0.35rem',
             }}
           >
-            Search Item or Notes:
+            Keyword Search
           </label>
           <div style={{ position: 'relative' }}>
             <input
               type="text"
-              placeholder="e.g. Wallet, AirPods, keys..."
-              className="paper-input"
+              placeholder="e.g. Wallet, AirPods, ID card..."
+              className="clean-input"
               value={filters.q}
               onChange={(e) => onFilterChange('q', e.target.value)}
-              style={{ paddingLeft: '2.3rem' }}
+              style={{ paddingLeft: '2.2rem' }}
             />
             <Search
-              size={16}
+              size={15}
               style={{
                 position: 'absolute',
                 left: '0.75rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#a89a8b',
+                color: '#94a3b8',
               }}
             />
           </div>
         </div>
 
-        {/* Category Selector */}
+        {/* Category */}
         <div>
           <label
             style={{
               display: 'block',
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.05rem',
-              color: '#5c3817',
-              marginBottom: '0.3rem',
+              fontSize: '0.82rem',
+              fontWeight: '600',
+              color: '#475569',
+              marginBottom: '0.35rem',
             }}
           >
-            Category:
+            Category
           </label>
           <select
-            className="paper-input"
+            className="clean-input"
             value={filters.category}
             onChange={(e) => onFilterChange('category', e.target.value)}
             style={{ cursor: 'pointer' }}
           >
             {categories.map((cat) => (
               <option key={cat} value={cat === 'All' ? '' : cat}>
-                {cat === 'All' ? '📂 All Categories' : cat}
+                {cat === 'All' ? 'All Categories' : cat}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Location Filter */}
+        {/* Location */}
         <div>
           <label
             style={{
               display: 'block',
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.05rem',
-              color: '#5c3817',
-              marginBottom: '0.3rem',
+              fontSize: '0.82rem',
+              fontWeight: '600',
+              color: '#475569',
+              marginBottom: '0.35rem',
             }}
           >
-            Campus Location:
+            Campus Location
           </label>
           <div style={{ position: 'relative' }}>
             <input
               type="text"
               placeholder="e.g. Library, CS Lab..."
-              className="paper-input"
+              className="clean-input"
               value={filters.location}
               onChange={(e) => onFilterChange('location', e.target.value)}
               style={{ paddingLeft: '2.2rem' }}
@@ -212,27 +182,27 @@ const FilterBar = ({ filters, onFilterChange, onReset }) => {
                 left: '0.75rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                color: '#a89a8b',
+                color: '#94a3b8',
               }}
             />
           </div>
         </div>
 
-        {/* Status Filter */}
+        {/* Status */}
         <div>
           <label
             style={{
               display: 'block',
-              fontFamily: 'var(--font-marker)',
-              fontSize: '1.05rem',
-              color: '#5c3817',
-              marginBottom: '0.3rem',
+              fontSize: '0.82rem',
+              fontWeight: '600',
+              color: '#475569',
+              marginBottom: '0.35rem',
             }}
           >
-            Report Status:
+            Status
           </label>
           <select
-            className="paper-input"
+            className="clean-input"
             value={filters.status}
             onChange={(e) => onFilterChange('status', e.target.value)}
             style={{ cursor: 'pointer' }}

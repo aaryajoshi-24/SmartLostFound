@@ -12,10 +12,10 @@ import {
   XCircle,
   Clock,
   Send,
-  AlertTriangle,
   Trash2,
   Edit3,
   ShieldCheck,
+  AlertCircle,
 } from 'lucide-react';
 
 const ItemDetail = () => {
@@ -78,7 +78,7 @@ const ItemDetail = () => {
   const handleSubmitClaim = async (e) => {
     e.preventDefault();
     if (!claimMessage.trim()) {
-      setFeedback({ type: 'error', text: 'Please provide proof or description in your claim message.' });
+      setFeedback({ type: 'error', text: 'Please provide proof or details in your claim message.' });
       return;
     }
 
@@ -91,7 +91,7 @@ const ItemDetail = () => {
       });
       setFeedback({
         type: 'success',
-        text: 'Your claim request has been posted to the finder for verification!',
+        text: 'Your claim request has been sent to the finder for review.',
       });
       setClaimMessage('');
       fetchItemAndClaims();
@@ -147,7 +147,7 @@ const ItemDetail = () => {
   };
 
   const handleDeleteItem = async () => {
-    if (window.confirm('Are you sure you want to remove this notice from the board?')) {
+    if (window.confirm('Are you sure you want to delete this notice?')) {
       try {
         await api.delete(`/items/${item._id}`);
         navigate('/my-reports');
@@ -161,28 +161,30 @@ const ItemDetail = () => {
     }
   };
 
+  const getStatusClass = (status) => {
+    if (status === 'Active') return 'status-active';
+    if (status === 'Claimed') return 'status-claimed';
+    return 'status-resolved';
+  };
+
   if (loading) {
     return (
-      <div className="noticeboard-frame" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
-        <div className="pin-card" style={{ display: 'inline-block', padding: '2rem 3rem' }}>
-          <div className="pushpin"><div className="pushpin-head"></div><div className="pushpin-point"></div></div>
-          <p style={{ fontFamily: 'var(--font-marker)', fontSize: '1.4rem' }}>Unpinning notice details...</p>
-        </div>
+      <div className="app-container" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+        <p style={{ color: '#64748b' }}>Loading notice details...</p>
       </div>
     );
   }
 
   if (error || !item) {
     return (
-      <div className="noticeboard-frame" style={{ maxWidth: '600px', margin: '3rem auto' }}>
-        <div className="pin-card" style={{ padding: '2rem', textAlign: 'center' }}>
-          <div className="pushpin"><div className="pushpin-head"></div><div className="pushpin-point"></div></div>
-          <h2 style={{ fontFamily: 'var(--font-marker)', fontSize: '1.8rem', color: '#991b1b', marginBottom: '1rem' }}>
+      <div className="app-container" style={{ maxWidth: '600px', margin: '3rem auto' }}>
+        <div className="clean-card" style={{ padding: '2.5rem', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '1.4rem', color: '#b91c1c', marginBottom: '0.75rem' }}>
             Notice Not Found
           </h2>
-          <p style={{ marginBottom: '1.5rem', color: '#5e5751' }}>{error || 'This flyer may have been taken down or removed.'}</p>
-          <Link to="/" className="btn-cork-primary">
-            <ArrowLeft size={16} /> Return to Corkboard
+          <p style={{ color: '#64748b', marginBottom: '1.5rem' }}>{error || 'This notice does not exist or has been deleted.'}</p>
+          <Link to="/" className="btn-primary">
+            <ArrowLeft size={16} /> Return to Notices
           </Link>
         </div>
       </div>
@@ -198,8 +200,8 @@ const ItemDetail = () => {
   });
 
   return (
-    <div className="noticeboard-frame" style={{ maxWidth: '960px' }}>
-      {/* Back button */}
+    <div className="app-container" style={{ maxWidth: '900px' }}>
+      {/* Back Button */}
       <div style={{ marginBottom: '1.25rem' }}>
         <button
           type="button"
@@ -207,46 +209,32 @@ const ItemDetail = () => {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#3e240f',
-            fontFamily: 'var(--font-marker)',
-            fontSize: '1.2rem',
+            color: '#475569',
+            fontSize: '0.9rem',
+            fontWeight: '600',
             cursor: 'pointer',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.4rem',
           }}
         >
-          <ArrowLeft size={18} /> Back to Corkboard
+          <ArrowLeft size={16} /> Back to Notices
         </button>
       </div>
 
       {feedback.text && (
         <div
-          className={`notice-alert ${
-            feedback.type === 'error' ? 'notice-alert-error' : 'notice-alert-success'
-          }`}
+          className={`alert-box ${feedback.type === 'error' ? 'alert-error' : 'alert-success'}`}
           style={{ marginBottom: '1.5rem' }}
         >
-          {feedback.text}
+          {feedback.type === 'error' ? <AlertCircle size={18} /> : <CheckCircle size={18} />}
+          <span>{feedback.text}</span>
         </div>
       )}
 
-      {/* Main Notice Flyer Container */}
-      <div
-        className="pin-card"
-        style={{
-          background: isLost ? 'var(--paper-lost)' : 'var(--paper-found)',
-          border: `2px solid ${isLost ? 'var(--lost-border)' : 'var(--found-border)'}`,
-          padding: '2rem',
-          marginBottom: '2rem',
-        }}
-      >
-        <div className={`pushpin ${isLost ? '' : 'pushpin-green'}`}>
-          <div className="pushpin-head"></div>
-          <div className="pushpin-point"></div>
-        </div>
-
-        {/* Top Tag & Status Stamp Row */}
+      {/* Main Notice Details Card */}
+      <div className="clean-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
+        {/* Top Header Row */}
         <div
           style={{
             display: 'flex',
@@ -254,31 +242,25 @@ const ItemDetail = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             gap: '1rem',
-            borderBottom: '2px dashed rgba(0,0,0,0.15)',
-            paddingBottom: '1rem',
+            borderBottom: '1px solid #f1f5f9',
+            paddingBottom: '1.25rem',
             marginBottom: '1.5rem',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-            <span
-              className={isLost ? 'badge-lost' : 'badge-found'}
-              style={{
-                fontSize: '1.25rem',
-                padding: '0.35rem 0.9rem',
-                borderRadius: '4px',
-              }}
-            >
-              {isLost ? '⚠ OFFICIAL LOST NOTICE' : '✦ OFFICIAL FOUND NOTICE'}
+            <span className={isLost ? 'tag-lost' : 'tag-found'} style={{ fontSize: '0.85rem', padding: '0.3rem 0.75rem' }}>
+              {isLost ? 'Lost Item' : 'Found Item'}
             </span>
+
             <span
               style={{
-                background: '#fff',
-                border: '1px solid #d6c7b2',
-                borderRadius: '20px',
-                padding: '0.3rem 0.8rem',
-                fontSize: '0.85rem',
-                fontWeight: 600,
-                color: 'var(--ink-muted)',
+                fontSize: '0.82rem',
+                fontWeight: '600',
+                color: '#64748b',
+                backgroundColor: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                padding: '0.25rem 0.65rem',
+                borderRadius: '6px',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.3rem',
@@ -289,67 +271,29 @@ const ItemDetail = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span
-              className={`stamp ${
-                item.status === 'Active'
-                  ? 'stamp-active'
-                  : item.status === 'Claimed'
-                  ? 'stamp-claimed'
-                  : 'stamp-resolved'
-              }`}
-              style={{ fontSize: '1.15rem', padding: '0.35rem 0.85rem' }}
-            >
+            <span className={`status-pill ${getStatusClass(item.status)}`} style={{ fontSize: '0.82rem', padding: '0.25rem 0.75rem' }}>
               {item.status}
             </span>
 
-            {/* If owner, show edit / delete buttons */}
+            {/* Reporter Edit/Delete Actions */}
             {isReporter && (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <Link
-                  to={`/items/${item._id}/edit`}
-                  style={{
-                    background: '#fef3c7',
-                    border: '1px solid #d97706',
-                    color: '#92400e',
-                    padding: '0.35rem 0.7rem',
-                    borderRadius: '4px',
-                    textDecoration: 'none',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.3rem',
-                  }}
-                >
-                  <Edit3 size={14} /> Edit
+                <Link to={`/items/${item._id}/edit`} className="btn-secondary btn-sm">
+                  <Edit3 size={13} /> Edit
                 </Link>
                 <button
                   type="button"
                   onClick={handleDeleteItem}
-                  style={{
-                    background: '#fee2e2',
-                    border: '1px solid #dc2626',
-                    color: '#991b1b',
-                    padding: '0.35rem 0.7rem',
-                    borderRadius: '4px',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.3rem',
-                  }}
+                  className="btn-danger btn-sm"
                 >
-                  <Trash2 size={14} /> Remove
+                  <Trash2 size={13} /> Delete
                 </button>
               </div>
             )}
           </div>
         </div>
 
-        {/* Content Layout (Photo + Details) */}
+        {/* Content Layout */}
         <div
           style={{
             display: 'grid',
@@ -358,15 +302,14 @@ const ItemDetail = () => {
             alignItems: 'start',
           }}
         >
-          {/* Polaroid Photo Frame */}
+          {/* Photo */}
           {item.image && (
             <div
-              className="polaroid-frame"
               style={{
-                textAlign: 'center',
-                margin: '0 auto',
-                maxWidth: '400px',
-                width: '100%',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                border: '1px solid #e2e8f0',
+                backgroundColor: '#f8fafc',
               }}
             >
               <img
@@ -380,121 +323,99 @@ const ItemDetail = () => {
                   maxHeight: '320px',
                   objectFit: 'cover',
                   display: 'block',
-                  borderRadius: '2px',
                 }}
               />
-              <p
-                style={{
-                  fontFamily: 'var(--font-marker)',
-                  color: '#78350f',
-                  fontSize: '1rem',
-                  marginTop: '0.65rem',
-                }}
-              >
-                Attached Photograph / Evidence
-              </p>
             </div>
           )}
 
-          {/* Details & Description */}
+          {/* Details */}
           <div>
             <h2
               style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '2.2rem',
-                lineHeight: 1.15,
-                color: 'var(--ink-primary)',
+                fontSize: '1.75rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                lineHeight: 1.25,
                 marginBottom: '1rem',
               }}
             >
               {item.title}
             </h2>
 
+            {/* Metadata Badges */}
             <div
               style={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.5rem',
-                background: 'rgba(255,255,255,0.7)',
+                backgroundColor: '#f8fafc',
                 padding: '1rem',
-                borderRadius: '6px',
-                border: '1px solid rgba(0,0,0,0.08)',
+                borderRadius: '8px',
+                border: '1px solid #e2e8f0',
                 marginBottom: '1.25rem',
+                fontSize: '0.88rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#78350f' }}>
-                <MapPin size={16} />
-                <span style={{ fontWeight: 600 }}>Location:</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155' }}>
+                <MapPin size={15} style={{ color: '#64748b' }} />
+                <span style={{ fontWeight: '600' }}>Location:</span>
                 <span>{item.location}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#57534e' }}>
-                <Calendar size={16} />
-                <span style={{ fontWeight: 600 }}>{isLost ? 'Date Lost:' : 'Date Found:'}</span>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155' }}>
+                <Calendar size={15} style={{ color: '#64748b' }} />
+                <span style={{ fontWeight: '600' }}>{isLost ? 'Date Lost:' : 'Date Found:'}</span>
                 <span>{formattedDate}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#57534e' }}>
-                <User size={16} />
-                <span style={{ fontWeight: 600 }}>Pinned by:</span>
-                <span>{item.reportedBy?.name || 'Anonymous Student'} ({item.reportedBy?.email})</span>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#334155' }}>
+                <User size={15} style={{ color: '#64748b' }} />
+                <span style={{ fontWeight: '600' }}>Reported by:</span>
+                <span>{item.reportedBy?.name || 'User'} ({item.reportedBy?.email})</span>
               </div>
             </div>
 
-            <h4
-              style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.25rem',
-                color: '#5c3817',
-                marginBottom: '0.4rem',
-              }}
-            >
-              Description & Identifying Marks:
-            </h4>
-            <div
-              style={{
-                fontSize: '1rem',
-                lineHeight: '1.6',
-                color: 'var(--ink-primary)',
-                whiteSpace: 'pre-line',
-                background: '#fff',
-                padding: '1rem',
-                borderRadius: '4px',
-                border: '1px solid #e7d8c5',
-              }}
-            >
-              {item.description}
+            {/* Description */}
+            <div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: '#334155', marginBottom: '0.4rem' }}>
+                Description & Details
+              </h4>
+              <p
+                style={{
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
+                  color: '#475569',
+                  whiteSpace: 'pre-line',
+                }}
+              >
+                {item.description}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* CLAIM WORKFLOW SECTION */}
-      {/* 1. If it's a found item and viewer is NOT the reporter */}
+      {/* CLAIM SECTION */}
+      {/* 1. For found items & user is NOT reporter */}
       {!isLost && !isReporter && (
-        <div
-          className="ruled-paper"
-          style={{
-            padding: '2rem',
-            marginBottom: '2rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <ShieldCheck size={26} style={{ color: '#059669' }} />
-            <h3 style={{ fontFamily: 'var(--font-marker)', fontSize: '1.85rem', color: '#065f46' }}>
-              Is this your item? File a Claim
+        <div className="clean-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+            <ShieldCheck size={22} color="#059669" />
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#0f172a' }}>
+              Is this your item? File an Ownership Claim
             </h3>
           </div>
-          <p style={{ color: '#57534e', fontSize: '0.92rem', marginBottom: '1.25rem' }}>
-            To protect student belongings, the finder will inspect your claim message and verify proof (e.g. distinctive scratches, lock screen image, serial digits, contents).
+          <p style={{ color: '#64748b', fontSize: '0.88rem', marginBottom: '1.25rem' }}>
+            The finder will review your proof message (e.g. unique scratches, serial numbers, exact contents) before releasing the item.
           </p>
 
-          {/* If user not logged in */}
           {!isAuthenticated ? (
             <div
               style={{
-                background: '#fef3c7',
-                border: '1px solid #f59e0b',
+                backgroundColor: '#eff6ff',
+                border: '1px solid #bfdbfe',
                 padding: '1rem',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -503,77 +424,75 @@ const ItemDetail = () => {
               }}
             >
               <div>
-                <strong style={{ color: '#92400e' }}>Sign in to submit a claim request.</strong>
-                <p style={{ fontSize: '0.85rem', color: '#b45309' }}>
-                  Logging in connects you directly with the finder to reclaim your item.
+                <strong style={{ color: '#1e40af', fontSize: '0.92rem' }}>Sign in to submit an ownership claim.</strong>
+                <p style={{ fontSize: '0.82rem', color: '#3b82f6', marginTop: '0.15rem' }}>
+                  Logging in allows the finder to verify and reply directly to your claim.
                 </p>
               </div>
-              <Link to="/login" className="btn-cork-primary" style={{ fontSize: '1rem' }}>
+              <Link to="/login" className="btn-primary btn-sm">
                 Sign In Now
               </Link>
             </div>
           ) : myClaim ? (
-            /* User already has a claim on this item */
             <div
               style={{
-                background:
+                backgroundColor:
                   myClaim.status === 'Approved'
                     ? '#ecfdf5'
                     : myClaim.status === 'Rejected'
                     ? '#fef2f2'
                     : '#fffbeb',
-                border: `2px solid ${
+                border: `1px solid ${
                   myClaim.status === 'Approved'
-                    ? '#10b981'
+                    ? '#a7f3d0'
                     : myClaim.status === 'Rejected'
-                    ? '#ef4444'
-                    : '#f59e0b'
+                    ? '#fecdd3'
+                    : '#fde68a'
                 }`,
-                borderRadius: '6px',
+                borderRadius: '8px',
                 padding: '1.25rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                {myClaim.status === 'Approved' && <CheckCircle size={22} color="#059669" />}
-                {myClaim.status === 'Rejected' && <XCircle size={22} color="#dc2626" />}
-                {myClaim.status === 'Pending' && <Clock size={22} color="#d97706" />}
-                <h4 style={{ fontFamily: 'var(--font-marker)', fontSize: '1.4rem', color: 'var(--ink-primary)' }}>
-                  Your Claim Status: <span style={{ textTransform: 'uppercase' }}>{myClaim.status}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                {myClaim.status === 'Approved' && <CheckCircle size={20} color="#059669" />}
+                {myClaim.status === 'Rejected' && <XCircle size={20} color="#dc2626" />}
+                {myClaim.status === 'Pending' && <Clock size={20} color="#b45309" />}
+                <h4 style={{ fontSize: '1.05rem', fontWeight: '600', color: '#0f172a' }}>
+                  Your Claim Status: <span style={{ textTransform: 'capitalize' }}>{myClaim.status}</span>
                 </h4>
               </div>
-              <p style={{ fontSize: '0.92rem', color: '#444', marginBottom: '0.5rem' }}>
-                <strong>Your proof message:</strong> "{myClaim.message}"
+              <p style={{ fontSize: '0.9rem', color: '#334155', marginBottom: '0.5rem' }}>
+                <strong>Your proof description:</strong> "{myClaim.message}"
               </p>
               {myClaim.status === 'Approved' && (
-                <div style={{ color: '#065f46', fontSize: '0.9rem', fontWeight: 600 }}>
-                  🎉 Great news! The finder approved your claim. You can contact them at {item.reportedBy?.email} to coordinate pickup.
+                <div style={{ color: '#047857', fontSize: '0.88rem', fontWeight: '500' }}>
+                  The finder has approved your claim! Reach out to {item.reportedBy?.email} to arrange item collection.
                 </div>
               )}
               {myClaim.status === 'Pending' && (
-                <div style={{ color: '#92400e', fontSize: '0.88rem' }}>
-                  ⏳ Your claim has been sent. The finder will review it shortly.
+                <div style={{ color: '#b45309', fontSize: '0.88rem' }}>
+                  Your claim is pending review by the finder.
                 </div>
               )}
               {myClaim.status === 'Rejected' && (
-                <div style={{ color: '#991b1b', fontSize: '0.88rem' }}>
-                  The finder indicated this claim did not match the item's identifying details.
+                <div style={{ color: '#b91c1c', fontSize: '0.88rem' }}>
+                  The finder did not verify this claim as matching the item details.
                 </div>
               )}
             </div>
           ) : item.status === 'Claimed' || item.status === 'Resolved' ? (
-            <div className="notice-alert" style={{ background: '#f1f5f9', borderLeftColor: '#64748b' }}>
+            <div className="alert-box" style={{ backgroundColor: '#f1f5f9', color: '#475569' }}>
               This item has already been marked as <strong>{item.status}</strong> and is no longer accepting new claims.
             </div>
           ) : (
-            /* Claim Submission Form */
             <form onSubmit={handleSubmitClaim}>
               <div style={{ marginBottom: '1rem' }}>
                 <label
                   style={{
                     display: 'block',
-                    fontFamily: 'var(--font-marker)',
-                    fontSize: '1.15rem',
-                    color: '#5c3817',
+                    fontSize: '0.88rem',
+                    fontWeight: '600',
+                    color: '#334155',
                     marginBottom: '0.35rem',
                   }}
                 >
@@ -581,8 +500,8 @@ const ItemDetail = () => {
                 </label>
                 <textarea
                   rows={4}
-                  className="paper-input"
-                  placeholder="Provide identifying features only the real owner would know: wallpaper/lockscreen, specific stickers, hidden marks, exact contents, serial number, etc."
+                  className="clean-input"
+                  placeholder="Mention unique identifying features: wallpapers, serial digits, internal contents, scratches, or stickers..."
                   value={claimMessage}
                   onChange={(e) => setClaimMessage(e.target.value)}
                   style={{ resize: 'vertical' }}
@@ -593,56 +512,41 @@ const ItemDetail = () => {
               <button
                 type="submit"
                 disabled={claimLoading}
-                className="btn-tag-found"
-                style={{ fontSize: '1.1rem' }}
+                className="btn-primary"
+                style={{ backgroundColor: '#059669', borderColor: '#059669' }}
               >
                 <Send size={16} />
-                {claimLoading ? 'Filing Claim...' : 'Submit Claim Request to Finder'}
+                {claimLoading ? 'Submitting...' : 'Submit Claim Request'}
               </button>
             </form>
           )}
         </div>
       )}
 
-      {/* 2. CLAIMS RECEIVED LIST (Visible to Reporter on Found Items) */}
+      {/* 2. CLAIMS RECEIVED LIST (For Reporter on Found items) */}
       {isReporter && !isLost && (
-        <div
-          className="ruled-paper"
-          style={{
-            padding: '2rem',
-            marginBottom: '2rem',
-          }}
-        >
+        <div className="clean-card" style={{ padding: '2rem', marginBottom: '2rem' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: '1rem',
-              borderBottom: '2px dashed #d6c7b2',
+              marginBottom: '1.25rem',
+              borderBottom: '1px solid #f1f5f9',
               paddingBottom: '0.75rem',
             }}
           >
-            <h3
-              style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.75rem',
-                color: '#442812',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-              }}
-            >
-              <ShieldCheck size={24} color="#b45309" />
-              Incoming Claim Requests ({claimsData.claims.length})
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <ShieldCheck size={22} color="#2563eb" />
+              Incoming Claims ({claimsData.claims.length})
             </h3>
-            <span style={{ fontSize: '0.85rem', color: '#78350f', fontWeight: 600 }}>
-              Only you (the finder) can review these
+            <span style={{ fontSize: '0.82rem', color: '#64748b' }}>
+              Only you as the finder can review these
             </span>
           </div>
 
           {claimsData.claims.length === 0 ? (
-            <p style={{ color: '#78716c', fontStyle: 'italic', padding: '1rem 0' }}>
+            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
               No claims have been submitted for this found item yet.
             </p>
           ) : (
@@ -651,11 +555,10 @@ const ItemDetail = () => {
                 <div
                   key={c._id}
                   style={{
-                    background: '#fff',
-                    border: '1px solid #e7d8c5',
-                    borderRadius: '6px',
+                    backgroundColor: '#f8fafc',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
                     padding: '1.25rem',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
                   }}
                 >
                   <div
@@ -669,38 +572,27 @@ const ItemDetail = () => {
                     }}
                   >
                     <div>
-                      <strong style={{ fontSize: '1rem', color: 'var(--ink-primary)' }}>
+                      <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>
                         {c.claimantId?.name || 'Student'}
                       </strong>{' '}
-                      <span style={{ color: '#78716c', fontSize: '0.85rem' }}>
+                      <span style={{ color: '#64748b', fontSize: '0.85rem' }}>
                         ({c.claimantId?.email})
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span
-                        className={`stamp ${
-                          c.status === 'Approved'
-                            ? 'stamp-active'
-                            : c.status === 'Rejected'
-                            ? 'stamp-resolved'
-                            : 'stamp-claimed'
-                        }`}
-                        style={{ fontSize: '0.85rem', padding: '0.15rem 0.5rem' }}
-                      >
-                        {c.status}
-                      </span>
-                    </div>
+                    <span className={`status-pill ${getStatusClass(c.status)}`}>
+                      {c.status}
+                    </span>
                   </div>
 
                   <p
                     style={{
-                      background: '#fffdf5',
+                      backgroundColor: '#ffffff',
                       padding: '0.75rem',
-                      borderRadius: '4px',
-                      borderLeft: '3px solid #b45309',
-                      fontSize: '0.92rem',
-                      color: 'var(--ink-primary)',
+                      borderRadius: '6px',
+                      border: '1px solid #e2e8f0',
+                      fontSize: '0.9rem',
+                      color: '#334155',
                       marginBottom: '0.85rem',
                     }}
                   >
@@ -716,52 +608,28 @@ const ItemDetail = () => {
                       gap: '0.5rem',
                     }}
                   >
-                    <span style={{ fontSize: '0.78rem', color: '#a8a29e' }}>
+                    <span style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
                       Received: {new Date(c.createdAt).toLocaleString()}
                     </span>
 
-                    {/* Action buttons if Pending */}
                     {c.status === 'Pending' && (
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
                         <button
                           type="button"
                           onClick={() => handleApproveClaim(c._id)}
                           disabled={actionLoadingId === c._id}
-                          style={{
-                            background: '#16a34a',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            padding: '0.35rem 0.85rem',
-                            fontFamily: 'var(--font-marker)',
-                            fontSize: '1rem',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
+                          className="btn-primary btn-sm"
+                          style={{ backgroundColor: '#16a34a', borderColor: '#16a34a' }}
                         >
-                          <CheckCircle size={15} /> Approve & Mark Claimed
+                          <CheckCircle size={14} /> Approve & Mark Claimed
                         </button>
                         <button
                           type="button"
                           onClick={() => handleRejectClaim(c._id)}
                           disabled={actionLoadingId === c._id}
-                          style={{
-                            background: '#dc2626',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            padding: '0.35rem 0.85rem',
-                            fontFamily: 'var(--font-marker)',
-                            fontSize: '1rem',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
+                          className="btn-danger btn-sm"
                         >
-                          <XCircle size={15} /> Reject
+                          <XCircle size={14} /> Reject
                         </button>
                       </div>
                     )}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  Pin,
+  MapPin,
   Search,
   PlusCircle,
   ClipboardList,
@@ -12,7 +12,7 @@ import {
   UserPlus,
   Menu,
   X,
-  Compass
+  User,
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -30,23 +30,29 @@ const Navbar = () => {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.4rem',
-    padding: '0.45rem 0.9rem',
-    borderRadius: '4px',
+    padding: '0.45rem 0.85rem',
+    borderRadius: '6px',
     textDecoration: 'none',
-    fontFamily: 'var(--font-marker)',
-    fontSize: '1.15rem',
-    letterSpacing: '0.03em',
-    color: isActive ? '#fef3c7' : '#d6c7b2',
-    backgroundColor: isActive ? 'rgba(217, 119, 6, 0.35)' : 'transparent',
-    border: isActive ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid transparent',
-    transition: 'all 0.2s ease',
+    fontSize: '0.92rem',
+    fontWeight: isActive ? '600' : '500',
+    color: isActive ? '#2563eb' : '#475569',
+    backgroundColor: isActive ? '#eff6ff' : 'transparent',
+    transition: 'all 0.15s ease',
   });
 
   return (
-    <header className="wood-header">
+    <header
+      style={{
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+      }}
+    >
       <div
         style={{
-          maxWidth: '1280px',
+          maxWidth: '1200px',
           margin: '0 auto',
           padding: '0.75rem 1.25rem',
           display: 'flex',
@@ -54,55 +60,53 @@ const Navbar = () => {
           justifyContent: 'space-between',
         }}
       >
-        {/* Brand / Signboard */}
+        {/* Logo / Brand */}
         <Link
           to="/"
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.75rem',
+            gap: '0.6rem',
             textDecoration: 'none',
           }}
           onClick={() => setMobileMenuOpen(false)}
         >
           <div
             style={{
-              background: '#b91c1c',
-              color: '#fff',
-              padding: '0.4rem 0.6rem',
-              borderRadius: '4px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.4)',
+              width: '34px',
+              height: '34px',
+              borderRadius: '8px',
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Pin size={20} fill="#fff" />
+            <MapPin size={20} />
           </div>
           <div>
-            <div
+            <span
               style={{
-                fontFamily: 'var(--font-marker)',
-                fontSize: '1.5rem',
-                lineHeight: 1.1,
-                color: '#fef3c7',
-                letterSpacing: '0.04em',
-                textShadow: '1px 2px 3px rgba(0,0,0,0.6)',
+                fontSize: '1.15rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                letterSpacing: '-0.02em',
+                display: 'block',
+                lineHeight: 1.2,
               }}
             >
-              CAMPUS LOST & FOUND
-            </div>
-            <div
+              Smart Lost & Found
+            </span>
+            <span
               style={{
-                fontSize: '0.72rem',
-                color: '#d4af37',
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
+                fontSize: '0.75rem',
+                color: '#64748b',
+                display: 'block',
               }}
             >
-              Community Noticeboard
-            </div>
+              Campus Portal
+            </span>
           </div>
         </Link>
 
@@ -111,42 +115,24 @@ const Navbar = () => {
           style={{
             display: 'none',
             alignItems: 'center',
-            gap: '0.4rem',
+            gap: '0.35rem',
           }}
           className="desktop-nav"
         >
           <NavLink to="/" style={navLinkStyle}>
-            <Search size={16} /> Board
+            <Search size={16} /> Browse Notices
           </NavLink>
 
           <NavLink to="/report-lost" style={navLinkStyle}>
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#ef4444',
-                display: 'inline-block',
-              }}
-            />
             Report Lost
           </NavLink>
 
           <NavLink to="/report-found" style={navLinkStyle}>
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#10b981',
-                display: 'inline-block',
-              }}
-            />
             Report Found
           </NavLink>
 
           <NavLink to="/dashboard" style={navLinkStyle}>
-            <BarChart3 size={16} /> Tally Board
+            <BarChart3 size={16} /> Dashboard
           </NavLink>
 
           {isAuthenticated && (
@@ -161,7 +147,7 @@ const Navbar = () => {
           style={{
             display: 'none',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.75rem',
           }}
           className="desktop-auth"
         >
@@ -169,86 +155,53 @@ const Navbar = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div
                 style={{
-                  background: 'rgba(254, 243, 199, 0.12)',
-                  border: '1px solid rgba(254, 243, 199, 0.25)',
-                  padding: '0.35rem 0.75rem',
-                  borderRadius: '20px',
-                  color: '#fef3c7',
-                  fontSize: '0.88rem',
-                  fontFamily: 'var(--font-sans)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.4rem',
+                  gap: '0.45rem',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '20px',
+                  backgroundColor: '#f1f5f9',
+                  border: '1px solid #e2e8f0',
+                  fontSize: '0.88rem',
+                  fontWeight: '600',
+                  color: '#334155',
                 }}
               >
                 <div
                   style={{
-                    width: '8px',
-                    height: '8px',
+                    width: '22px',
+                    height: '22px',
                     borderRadius: '50%',
-                    background: '#22c55e',
+                    backgroundColor: '#2563eb',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
                   }}
-                />
-                <span style={{ fontWeight: 600 }}>{user?.name}</span>
+                >
+                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <span>{user?.name}</span>
               </div>
               <button
                 onClick={handleLogout}
+                className="btn-secondary btn-sm"
                 style={{
-                  background: 'transparent',
-                  border: '1px solid rgba(239, 68, 68, 0.5)',
-                  color: '#fca5a5',
-                  borderRadius: '4px',
-                  padding: '0.35rem 0.65rem',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                  fontFamily: 'var(--font-marker)',
-                  fontSize: '1rem',
-                  transition: 'all 0.2s',
+                  color: '#dc2626',
+                  borderColor: '#fecdd3',
                 }}
-                title="Log Out"
+                title="Sign Out"
               >
-                <LogOut size={15} /> Sign Out
+                <LogOut size={14} /> Sign Out
               </button>
             </div>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Link
-                to="/login"
-                style={{
-                  background: 'rgba(254, 243, 199, 0.1)',
-                  border: '1px solid rgba(254, 243, 199, 0.3)',
-                  color: '#fef3c7',
-                  padding: '0.4rem 0.85rem',
-                  borderRadius: '4px',
-                  textDecoration: 'none',
-                  fontFamily: 'var(--font-marker)',
-                  fontSize: '1.05rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                }}
-              >
+              <Link to="/login" className="btn-secondary btn-sm">
                 <LogIn size={15} /> Sign In
               </Link>
-              <Link
-                to="/register"
-                style={{
-                  background: 'linear-gradient(180deg, #d97706 0%, #b45309 100%)',
-                  color: '#fff',
-                  border: '1px solid #f59e0b',
-                  padding: '0.4rem 0.95rem',
-                  borderRadius: '4px',
-                  textDecoration: 'none',
-                  fontFamily: 'var(--font-marker)',
-                  fontSize: '1.05rem',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                }}
-              >
+              <Link to="/register" className="btn-primary btn-sm">
                 <UserPlus size={15} /> Register
               </Link>
             </div>
@@ -261,7 +214,7 @@ const Navbar = () => {
           style={{
             background: 'transparent',
             border: 'none',
-            color: '#fef3c7',
+            color: '#334155',
             cursor: 'pointer',
             padding: '0.4rem',
             display: 'block',
@@ -269,7 +222,7 @@ const Navbar = () => {
           className="mobile-toggle"
           aria-label="Toggle menu"
         >
-          {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
@@ -277,126 +230,66 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div
           style={{
-            background: '#381f0b',
-            borderTop: '1px solid rgba(255,255,255,0.1)',
+            backgroundColor: '#ffffff',
+            borderTop: '1px solid #e2e8f0',
             padding: '1rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.75rem',
+            gap: '0.5rem',
           }}
         >
-          <NavLink
-            to="/"
-            style={navLinkStyle}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <Search size={16} /> Noticeboard
+          <NavLink to="/" style={navLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+            <Search size={16} /> Browse Notices
           </NavLink>
-          <NavLink
-            to="/report-lost"
-            style={navLinkStyle}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#ef4444',
-                display: 'inline-block',
-              }}
-            />
+          <NavLink to="/report-lost" style={navLinkStyle} onClick={() => setMobileMenuOpen(false)}>
             Report Lost
           </NavLink>
-          <NavLink
-            to="/report-found"
-            style={navLinkStyle}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: '#10b981',
-                display: 'inline-block',
-              }}
-            />
+          <NavLink to="/report-found" style={navLinkStyle} onClick={() => setMobileMenuOpen(false)}>
             Report Found
           </NavLink>
-          <NavLink
-            to="/dashboard"
-            style={navLinkStyle}
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            <BarChart3 size={16} /> Tally Board
+          <NavLink to="/dashboard" style={navLinkStyle} onClick={() => setMobileMenuOpen(false)}>
+            <BarChart3 size={16} /> Dashboard
           </NavLink>
           {isAuthenticated && (
-            <NavLink
-              to="/my-reports"
-              style={navLinkStyle}
-              onClick={() => setMobileMenuOpen(false)}
-            >
+            <NavLink to="/my-reports" style={navLinkStyle} onClick={() => setMobileMenuOpen(false)}>
               <ClipboardList size={16} /> My Reports
             </NavLink>
           )}
 
           <div
             style={{
-              borderTop: '1px solid rgba(255,255,255,0.15)',
+              borderTop: '1px solid #e2e8f0',
               paddingTop: '0.75rem',
               marginTop: '0.25rem',
             }}
           >
             {isAuthenticated ? (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#fef3c7', fontSize: '0.9rem' }}>Signed in as: <strong>{user?.name}</strong></span>
+                <span style={{ fontSize: '0.9rem', color: '#475569' }}>
+                  Signed in as: <strong>{user?.name}</strong>
+                </span>
                 <button
                   onClick={handleLogout}
-                  style={{
-                    background: '#991b1b',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '0.4rem 0.8rem',
-                    fontFamily: 'var(--font-marker)',
-                    cursor: 'pointer',
-                  }}
+                  className="btn-danger btn-sm"
                 >
                   Sign Out
                 </button>
               </div>
             ) : (
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    background: 'rgba(255,255,255,0.1)',
-                    color: '#fef3c7',
-                    padding: '0.5rem',
-                    borderRadius: '4px',
-                    textDecoration: 'none',
-                    fontFamily: 'var(--font-marker)',
-                  }}
+                  className="btn-secondary"
+                  style={{ flex: 1, textAlign: 'center' }}
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    background: '#d97706',
-                    color: '#fff',
-                    padding: '0.5rem',
-                    borderRadius: '4px',
-                    textDecoration: 'none',
-                    fontFamily: 'var(--font-marker)',
-                  }}
+                  className="btn-primary"
+                  style={{ flex: 1, textAlign: 'center' }}
                 >
                   Register
                 </Link>

@@ -31,7 +31,7 @@ const Login = () => {
     } catch (err) {
       console.error('Login error:', err);
       if (!err.response) {
-        setError('Cannot connect to backend server. Please ensure the backend server is running on port 5000.');
+        setError('Cannot connect to backend server. Please ensure the backend server is running on port 5001.');
       } else {
         setError(err.response.data?.message || 'Invalid email or password.');
       }
